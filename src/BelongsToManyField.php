@@ -4,6 +4,7 @@ namespace Benjacho\BelongsToManyField;
 
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\ResourceRelationshipGuesser;
 use Benjacho\BelongsToManyField\Rules\ArrayRules;
 
 class BelongsToManyField extends Field
@@ -14,7 +15,6 @@ class BelongsToManyField extends Field
     public $height = '350px';
     /**
      * The field's component.
-     *
      * @var string
      */
 
@@ -26,10 +26,9 @@ class BelongsToManyField extends Field
 
     /**
      * Create a new field.
-     *
-     * @param  string  $name
-     * @param  string|null  $attribute
-     * @param  string|null  $resource
+     * @param string $name
+     * @param string|null $attribute
+     * @param string|null $resource
      * @return void
      */
     //Code by @drsdre
@@ -47,10 +46,11 @@ class BelongsToManyField extends Field
             if (is_subclass_of($model, 'Illuminate\Database\Eloquent\Model')) {
                 $model::saved(function ($model) use ($attribute, $request) {
                     $inp = json_decode($request->$attribute, true);
-                    if ($inp !== null)
+                    if ($inp !== null) {
                         $values = array_column($inp, 'id');
-                    else
+                    } else {
                         $values = [];
+                    }
                     $model->$attribute()->sync(
                         $values
                     );
